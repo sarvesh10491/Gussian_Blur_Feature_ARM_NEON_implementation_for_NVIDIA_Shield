@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Tilt_Shift_Blur</string>
+    <string-array name="languages">
+        <item>Java</item>
+        <item>C++</item>
+        <item>NEON I</item>
+    </string-array>
+</resources>

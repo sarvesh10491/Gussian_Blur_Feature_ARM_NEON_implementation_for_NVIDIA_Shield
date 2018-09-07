@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <ImageView
+        android:id="@+id/ivAttachment"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/attach_icon" />
+
+    <Spinner
+        android:id="@+id/language_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivAttachment"/>
+
+
+    <com.example.achal.musicfx.SeekBarRotator
+        android:id="@+id/seekBarRotator"
+        android:layout_width="797dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ivAttachment"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp">
+
+        <SeekBar
+            android:id="@+id/rowSeek0"
+            android:layout_width="325dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:rotation="270" />
+    </com.example.achal.musicfx.SeekBarRotator>
+
+
+    <com.example.achal.musicfx.SeekBarRotator
+        android:id="@+id/seekBarRotator2"
+        android:layout_width="797dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ivAttachment"
+        android:layout_toRightOf="@+id/seekBarRotator"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp">
+
+        <SeekBar
+            android:id="@+id/rowSeek1"
+            android:layout_width="325dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:rotation="270" />
+    </com.example.achal.musicfx.SeekBarRotator>
+
+    <com.example.achal.musicfx.SeekBarRotator
+        android:id="@+id/seekBarRotator3"
+        android:layout_width="797dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ivAttachment"
+        android:layout_toRightOf="@+id/seekBarRotator2"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp">
+
+        <SeekBar
+            android:id="@+id/rowSeek2"
+            android:layout_width="325dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:rotation="270" />
+    </com.example.achal.musicfx.SeekBarRotator>
+
+    <com.example.achal.musicfx.SeekBarRotator
+        android:id="@+id/seekBarRotator4"
+        android:layout_width="797dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ivAttachment"
+        android:layout_toRightOf="@+id/seekBarRotator3"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp">
+
+        <SeekBar
+            android:id="@+id/rowSeek3"
+            android:layout_width="325dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:rotation="270" />
+    </com.example.achal.musicfx.SeekBarRotator>
+
+
+    <com.example.achal.musicfx.SeekBarRotator
+        android:id="@+id/seekBarRotator5"
+        android:layout_width="797dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ivAttachment"
+        android:layout_toRightOf="@+id/seekBarRotator4"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp">
+
+        <SeekBar
+            android:id="@+id/rowSeek4"
+            android:layout_width="325dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:rotation="270" />
+    </com.example.achal.musicfx.SeekBarRotator>
+
+
+    <com.example.achal.musicfx.SeekBarRotator
+        android:id="@+id/seekBarRotator6"
+        android:layout_width="797dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ivAttachment"
+        android:layout_toRightOf="@+id/seekBarRotator5"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp">
+
+        <SeekBar
+            android:id="@+id/rowSeek5"
+            android:layout_width="325dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:rotation="270" />
+    </com.example.achal.musicfx.SeekBarRotator>
+
+    <Button
+        android:id="@+id/button_blur"
+        android:layout_width="101dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="51dp"
+        android:layout_toEndOf="@+id/seekBarRotator3"
+        android:background="@android:color/holo_blue_dark"
+        android:text="Blur It !"
+        android:textSize="15sp" />
+
+
+    <ImageView
+        android:id="@+id/iv_blur_image"
+        android:layout_width="600dp"
+        android:layout_height="400dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="31dp"
+        android:scaleType="fitXY" />
+
+    <Button
+        android:id="@+id/reset_blur"
+        android:layout_width="101dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="51dp"
+        android:layout_toEndOf="@+id/button_blur"
+        android:layout_alignBottom="@+id/button_blur"
+        android:background="@android:color/holo_blue_dark"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="215dp"
+        android:text="Reset"
+        android:textSize="15sp" />
+
+
+</RelativeLayout>
