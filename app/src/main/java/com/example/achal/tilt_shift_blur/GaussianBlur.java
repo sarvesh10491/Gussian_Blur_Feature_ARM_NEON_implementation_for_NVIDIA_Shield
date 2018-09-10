@@ -19,7 +19,7 @@ public class GaussianBlur {
     public static Bitmap tiltBlur_java(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3) {
         Log.d(null, "Running Java #####");
         Log.d(null, "Bitmap input values" + input.getHeight());
-        sigma_far = 2;
+        sigma_far = (float) 2;
         sigma_near = 1;
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
         //cannot write to input Bitmap, since it may be immutable
@@ -30,10 +30,10 @@ public class GaussianBlur {
         double[] kernelMatNear, kernelMatFar;
         kernelMatFar = kernelMatrix(kernelRadFar, sigma_far);
         kernelMatNear = kernelMatrix(kernelRadNear, sigma_near);
-//        Log.d(null,"Kernel vector");
-//        for(int i=0;i<kernelMatFar.length;i++){
-//            Log.d(null,kernelMatFar[i]+"\t");
-//        }
+        Log.d(null,"Kernel vector");
+        for(int i=0;i<kernelMatFar.length;i++){
+            Log.d(null,kernelMatFar[i]+"\t");
+        }
         Log.d(null, "\t" + input.getWidth() + "\t" + input.getHeight());
         int pixelArrayDimention = (input.getHeight() + kernelMatFar.length - 1) * (input.getWidth() + kernelMatFar.length - 1);
         int[] pixels = new int[pixelArrayDimention];
@@ -52,7 +52,8 @@ public class GaussianBlur {
         }
 
       // displayFunc(pixels2D);
-        weightVectBlur(pixels2D,kernelMatFar,kernelMatFar.length);
+//        weightVectBlur(pixels2D,kernelMatFar,kernelMatFar.length);
+        ybasedBlur(pixels2D,kernelMatFar,kernelMatFar.length);
        // displayFunc(pixels2D);
         for (int i = 0; i < input.getHeight(); i++) {
             for (int j = 0; j < input.getWidth(); j++) {
@@ -69,6 +70,7 @@ public class GaussianBlur {
 //            int color = (A & 0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
 //            pixelsOut[i]=color;
 //        }
+        Log.d(null,"Blurring complete !!!!");
         outBmp.setPixels(pixelsOut, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
 
         return outBmp;
@@ -106,11 +108,55 @@ public class GaussianBlur {
         return matrix;
     }
 
+    public static void ybasedBlur(int[][] image_map, double[] gauss_vect, int radius){
+        for (int index_x = radius / 2; index_x < (image_map.length - radius/ 2); index_x++) {
+            for (int index_y = radius / 2; index_y < (image_map[index_x].length - radius / 2); index_y++) {
+                double R=0.0,G=0.0,B=0.0,A=0.0;
+                int max=255,min=0;
+                for(int i=-radius / 2;i<radius/2;i++){
+                    A+=colorGaussBlur(image_map[index_x+i][index_y],gauss_vect[(radius/2)+i],3);
+                    R+=colorGaussBlur(image_map[index_x+i][index_y],gauss_vect[(radius/2)+i],2);
+                    G+=colorGaussBlur(image_map[index_x+i][index_y],gauss_vect[(radius/2)+i],1);
+                    B+=colorGaussBlur(image_map[index_x+i][index_y],gauss_vect[(radius/2)+i],0);
+
+                }
+                image_map[index_x][index_y]= ((int)A & 0xff) << 24 | ((int)R & 0xff) << 16 | ((int)G & 0xff) << 8 | ((int)B & 0xff);
+//                System.out.print(image_map[index_x][index_y]+"\t");
+            }
+//            System.out.println();
+        }
+
+        for (int index_x = radius / 2; index_x < (image_map.length - radius/ 2); index_x++) {
+            for (int index_y = radius / 2; index_y < (image_map[index_x].length - radius / 2); index_y++) {
+                double R=0.0,G=0.0,B=0.0,A=0.0;
+                int max=255,min=0,color;
+                for(int i=-radius / 2;i<radius/2;i++){
+                    A+=colorGaussBlur(image_map[index_x+i][index_y],gauss_vect[(radius/2)+i],3);
+                    R+=colorGaussBlur(image_map[index_x][index_y+i],gauss_vect[(radius/2)+i],2);
+                    G+=colorGaussBlur(image_map[index_x][index_y+i],gauss_vect[(radius/2)+i],1);
+                    B+=colorGaussBlur(image_map[index_x][index_y+i],gauss_vect[(radius/2)+i],0);
+
+                }
+                image_map[index_x][index_y]= ((int)A & 0xff) << 24 | /*(Math.max(min, Math.min(max,R))*/ ((int)R & 0xff) << 16 | ((int)G & 0xff) << 8 | ((int)B & 0xff);
+
+            }
+
+        }
+
+    }
+
+    public static double colorGaussBlur(int pixel,double gauss, int mul){
+        int G = (pixel >> (mul*8)) & 0xff;
+        double ret =  (G * gauss);
+        return ret;
+    }
+
     public static void weightVectBlur(int[][] image_map, double[] gauss_vect, int radius) {
         //static int check1=0;
-        for (int index_x = radius / 2; index_x < image_map.length - radius/ 2; index_x++) {
+        for (int index_x = radius / 2; index_x < (image_map.length - radius/ 2); index_x++) {
             //static int check2=0;
-            for (int index_y = radius / 2; index_y < image_map[index_x].length - radius / 2; index_y++) {
+//            System.out.println();
+            for (int index_y = radius / 2; index_y < (image_map[index_x].length - radius / 2); index_y++) {
                 int[][] pixelMat = new int[radius][radius];
                // static int check3=0;
                 for (int i = index_x - radius / 2,k=0; i < index_x + radius / 2; i++,k++) {
@@ -120,14 +166,16 @@ public class GaussianBlur {
                         pixelMat[k][l]=image_map[i][j];
                         //System.out.print(image_map[i][j]+"_"+i+"_"+j+"\t");
                     }
-                   // System.out.println();
-                    //q[i] = sum_row;
-          //          check3++;
+                       // System.out.println();
+                        //q[i] = sum_row;
+              //          check3++;
                 }
+//               displayFunc(image_map);
                 image_map[index_x][index_y]=transformedPixelValue(pixelMat,gauss_vect);
-               // System.out.println("Changed Pixel "+  image_map[index_x][index_y]);
-                //displayFunc(image_map);
+//                displayFunc(image_map);
+//               System.out.print(image_map[index_x][index_y] + " ");
 
+//                break;
 //                int tmp = 0;
 //                for (int i = 0; i < radius; i++) {
 //
@@ -135,10 +183,11 @@ public class GaussianBlur {
 //                }
 //                image_map[index_x][index_y] = tmp;
             }
-            // break;
+//             break;
+//            System.out.println();
         }
 
-
+    Log.d(null,"Blurring complete !!!!");
     }
 
     public static int transformedPixelValue(int[][] pixel, double[] gauss) {
@@ -155,14 +204,14 @@ public class GaussianBlur {
 //        color[2] = R;
         int A = 0xff;
 //        color[3] = A;
-        int red,green,blue;
+        int red,green,blue,max=255,min=0;
 
-        blue=colorTransform(pixel,gauss,0);
-        green=colorTransform(pixel,gauss,1);
-        red=colorTransform(pixel,gauss,2);
+        blue=Math.max(min, Math.min(max,colorTransform(pixel,gauss,0) ));
+        green=Math.max(min, Math.min(max,colorTransform(pixel,gauss,1) ));
+        red=Math.max(min, Math.min(max,colorTransform(pixel,gauss,2) ));
         int color = (A & 0xff) << 24 | (red & 0xff) << 16 | (green & 0xff) << 8 | (blue & 0xff);
-
-        return color;
+//        System.out.println("Color ka value"+ color +" Blue"+blue+" Green"+green+" Red"+red);
+         return color;
     }
     public static int colorTransform(int[][] pixel, double[] gauss,int mul){
         int [] colorMat=new int[pixel.length];
@@ -170,14 +219,17 @@ public class GaussianBlur {
         for(int i=0;i<pixel.length;i++){
             int tmp=0;
             for(int j=0;j<pixel[i].length;j++){
-                int pix = (pixel[i][j] >> (mul*8)) % 0xff;
+                int pix = (pixel[i][j] >> (mul*8)) & 0xff;
+//                System.out.print(pix+" ");
                 tmp += (int)(pix*gauss[j]);
 
             }
+//            System.out.println("tmp:"+tmp);
             colorMat[i] = tmp;
             second_transform+= colorMat[i]*gauss[i];
 
         }
+//      System.out.println("R/G/B value"+second_transform+" ");
         return second_transform;
 
     }
