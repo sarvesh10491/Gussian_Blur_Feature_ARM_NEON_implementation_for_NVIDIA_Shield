@@ -19,7 +19,7 @@ public class GaussianBlur {
     public static Bitmap tiltBlur_java(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3) {
         Log.d(null, "Running Java #####");
         Log.d(null, "Bitmap input values" + input.getHeight());
-        sigma_far = (float) 2;
+        sigma_far = (float) 0.9;
         sigma_near = 1;
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
         //cannot write to input Bitmap, since it may be immutable
@@ -35,45 +35,132 @@ public class GaussianBlur {
             Log.d(null,kernelMatFar[i]+"\t");
         }
         Log.d(null, "\t" + input.getWidth() + "\t" + input.getHeight());
-        int pixelArrayDimention = (input.getHeight() + kernelMatFar.length - 1) * (input.getWidth() + kernelMatFar.length - 1);
+        int pixelArrayDimention = (input.getHeight()) * (input.getWidth());
         int[] pixels = new int[pixelArrayDimention];
         int[][] pixels2D = new int[(input.getHeight() + kernelMatFar.length - 1)][(input.getWidth() + kernelMatFar.length - 1)];
-
+        int radius_far=kernelMatFar.length/2;
+        int radius_near=kernelMatNear.length/2;
+        int height=input.getHeight();
+        int width=input.getWidth();
+        a0=height/5;
+        a1=height*2/5;
+        a2=height*3/5;
+        a3=height*4/5;
+        int a1a0=a1-a0;
+        int a2a3=a3-a2;
+        System.out.println("Array size"+pixels.length+"\tHeight"+height+"\tWidth"+width);
         Log.d(null, "Pixel length" + pixels2D.length + "\t" + pixels2D[1].length);
-        int[] pixelsOut = new int[(input.getHeight() + kernelMatFar.length - 1) * (input.getWidth() + kernelMatFar.length - 1)];
+        int[] pixelsOut = new int[(width) * (height)];
+
         input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
-        for (int i = 0; i < input.getHeight(); i++) {
-            for (int j = 0; j < input.getWidth(); j++) {
-                pixels2D[i + kernelMatFar.length / 2][j + kernelMatFar.length / 2] = pixels[i * input.getWidth() + j];
 
+//      First Transform Starts
+        for(int i=0;i<a0;i++){
+            for(int j = radius_far; j < width-radius_far; j++){
+                pixels[i * width + j] = firstTransform(pixels,kernelMatFar,i,j,width,radius_far);
+            }
 
-                //               Log.d(null, "\t" + pixels[i * (input.getWidth() + kernelMatFar.length-1) + j]);
+        }
+        for(int i=a0;i<a1;i++){
+            double newsigmaFar=sigma_far*(a1-i)/a1a0;
+            double[] newGaussVect;
+            int newGaussVectSize=(int) Math.ceil((2 * sigma_far));
+            newGaussVect=kernelMatrix(newGaussVectSize, (float) newsigmaFar);
+            int newRadius=newGaussVect.length/2;
+            for(int j = newRadius; j < width-newRadius; j++){
+                pixels[i * width + j] = firstTransform(pixels,newGaussVect,i,j,width,newRadius);
+            }
+
+        }
+
+        for(int i=a2+1;i<a3;i++){
+            double newsigmaNear=sigma_near*(i-a2)/a2a3;
+            double[] newGaussVect;
+            int newGaussVectSize=(int) Math.ceil((2 * sigma_near));
+            newGaussVect=kernelMatrix(newGaussVectSize, (float) newsigmaNear);
+            int newRadius=newGaussVect.length/2;
+            for(int j = newRadius; j < width-newRadius; j++){
+                pixels[i * width + j] = firstTransform(pixels,newGaussVect,i,j,width,newRadius);
+            }
+
+        }
+
+        for(int i=a3;i<height;i++){
+            for(int j=radius_near;j<width-radius_near;j++){
+
+                pixels[i * width + j] = firstTransform(pixels,kernelMatNear,i,j,width,radius_near);
+
+            }
+
+        }
+
+//        Second Transform Starts
+        for(int i=radius_far;i<a0;i++) {
+            for (int j = 0; j < width ; j++) {
+                    pixels[i * width + j] = secondTransform(pixels,kernelMatFar,i,j,width,radius_far);
+                }
+            }
+
+        for(int i=a0;i<a1;i++){
+            double newsigmaFar=sigma_far*(a1-i)/a1a0;
+            double[] newGaussVect;
+            int newGaussVectSize=(int) Math.ceil((2 * sigma_far));
+            newGaussVect=kernelMatrix(newGaussVectSize, (float) newsigmaFar);
+            int newRadius=newGaussVect.length/2;
+            for(int j=0;j<width;j++){
+                pixels[i * width + j] = secondTransform(pixels,newGaussVect,i,j,width,newRadius);
+            }
+
+        }
+
+        for(int i=a2+1;i<a3;i++){
+            double newsigmaNear=sigma_near*(i-a2)/a2a3;
+            double[] newGaussVect;
+            int newGaussVectSize=(int) Math.ceil((2 * sigma_near));
+            newGaussVect=kernelMatrix(newGaussVectSize, (float) newsigmaNear);
+            int newRadius=newGaussVect.length/2;
+            for(int j=0;j<width;j++){
+                pixels[i * width + j] = secondTransform(pixels,newGaussVect,i,j,width,newRadius);
             }
         }
 
-      // displayFunc(pixels2D);
-//        weightVectBlur(pixels2D,kernelMatFar,kernelMatFar.length);
-        ybasedBlur(pixels2D,kernelMatFar,kernelMatFar.length);
-       // displayFunc(pixels2D);
-        for (int i = 0; i < input.getHeight(); i++) {
-            for (int j = 0; j < input.getWidth(); j++) {
-                pixelsOut[i*input.getWidth() + j] = pixels2D[i+kernelMatFar.length / 2][j+kernelMatFar.length / 2];
+
+        for(int i=a3;i<height-radius_near;i++) {
+            for (int j = 0; j < width ; j++) {
+                pixels[i * width + j] = secondTransform(pixels,kernelMatNear,i,j,width,radius_near);
+
             }
         }
 
-//        for (int i=0;i<pixelMatDimention;i++){
-//            int B = pixels[i]%0xff;
-//            int G = (pixels[i]>>8)%0xff;
-//            int R = (pixels[i]>>16)%0xff;
-//            int A = 0xff;
-//            G=0;
-//            int color = (A & 0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
-//            pixelsOut[i]=color;
-//        }
         Log.d(null,"Blurring complete !!!!");
-        outBmp.setPixels(pixelsOut, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
+        outBmp.setPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
 
         return outBmp;
+    }
+
+    public static int firstTransform(int[] pixels,double[] kernelMat, int i, int j,int width, int radius){
+
+        double R=0.0,G=0.0,B=0.0,A=0.0;
+        for (int g_index = -radius; g_index <= radius; g_index++) {
+            A += colorGaussBlur(pixels[i * width + j + g_index], kernelMat[radius + g_index], 3);
+            R += colorGaussBlur(pixels[i * width + j + g_index], kernelMat[radius + g_index], 2);
+            G += colorGaussBlur(pixels[i * width + j + g_index], kernelMat[radius + g_index], 1);
+            B += colorGaussBlur(pixels[i * width + j + g_index], kernelMat[radius + g_index], 0);
+
+        }
+        return ((int) A & 0xff) << 24 | ((int) R & 0xff) << 16 | ((int) G & 0xff) << 8 | ((int) B & 0xff);
+    }
+
+    public static int secondTransform(int[] pixels,double[] kernelMat, int i, int j,int width, int radius){
+        double R=0.0,G=0.0,B=0.0,A=0.0;
+        for (int g_index = -radius; g_index <= radius; g_index++) {
+              A += colorGaussBlur(pixels[j + (i + g_index) * width], kernelMat[radius + g_index], 3);
+              R += colorGaussBlur(pixels[j + (i + g_index) * width], kernelMat[radius + g_index], 2);
+              G += colorGaussBlur(pixels[j + (i + g_index) * width], kernelMat[radius + g_index], 1);
+              B += colorGaussBlur(pixels[j + (i + g_index) * width], kernelMat[radius + g_index], 0);
+
+            }
+        return ((int) A & 0xff) << 24 | ((int) R & 0xff) << 16 | ((int) G & 0xff) << 8 | ((int) B & 0xff);
     }
 
     public static void displayFunc(int[][] pixels2D) {
@@ -103,7 +190,7 @@ public class GaussianBlur {
             normTotal += matrix[i];
         }
 
-        System.out.println(normTotal);
+//        System.out.println(normTotal);
 
         return matrix;
     }
