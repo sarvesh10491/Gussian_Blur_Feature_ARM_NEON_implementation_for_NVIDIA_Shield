@@ -31,9 +31,19 @@
             android:layout_width="325dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="#ead9da"
             android:rotation="270" />
+
     </com.example.achal.musicfx.SeekBarRotator>
 
+    <TextView
+        android:id="@+id/seek0_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/seekBarRotator"
+        android:layout_below="@+id/iv_blur_image"
+        android:layout_toStartOf="@+id/seekBarRotator2"
+        android:text="a0" />
 
     <com.example.achal.musicfx.SeekBarRotator
         android:id="@+id/seekBarRotator2"
@@ -50,8 +60,18 @@
             android:layout_width="325dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="#ead9da"
             android:rotation="270" />
     </com.example.achal.musicfx.SeekBarRotator>
+
+    <TextView
+        android:id="@+id/seek1_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/seekBarRotator2"
+        android:layout_below="@+id/iv_blur_image"
+        android:layout_toStartOf="@+id/seekBarRotator3"
+        android:text="a1" />
 
     <com.example.achal.musicfx.SeekBarRotator
         android:id="@+id/seekBarRotator3"
@@ -68,8 +88,18 @@
             android:layout_width="325dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="#ead9da"
             android:rotation="270" />
     </com.example.achal.musicfx.SeekBarRotator>
+
+    <TextView
+        android:id="@+id/seek2_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/seekBarRotator3"
+        android:layout_below="@+id/iv_blur_image"
+        android:layout_toStartOf="@+id/seekBarRotator4"
+        android:text="a2" />
 
     <com.example.achal.musicfx.SeekBarRotator
         android:id="@+id/seekBarRotator4"
@@ -86,8 +116,18 @@
             android:layout_width="325dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="#ead9da"
             android:rotation="270" />
     </com.example.achal.musicfx.SeekBarRotator>
+
+    <TextView
+        android:id="@+id/seek3_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/seekBarRotator4"
+        android:layout_below="@+id/iv_blur_image"
+        android:layout_toStartOf="@+id/seekBarRotator5"
+        android:text="a3" />
 
 
     <com.example.achal.musicfx.SeekBarRotator
@@ -105,8 +145,17 @@
             android:layout_width="325dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="#d5eaea"
             android:rotation="270" />
     </com.example.achal.musicfx.SeekBarRotator>
+
+    <TextView
+        android:id="@+id/seek4_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/seekBarRotator5"
+        android:layout_below="@+id/iv_blur_image"
+        android:text="σ F" />
 
 
     <com.example.achal.musicfx.SeekBarRotator
@@ -124,8 +173,17 @@
             android:layout_width="325dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="#d5eaea"
             android:rotation="270" />
     </com.example.achal.musicfx.SeekBarRotator>
+
+    <TextView
+        android:id="@+id/seek5_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/seekBarRotator6"
+        android:layout_below="@+id/iv_blur_image"
+        android:text="σ N" />
 
     <Button
         android:id="@+id/button_blur"
@@ -146,6 +204,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="31dp"
+        android:src="@drawable/lena"
         android:scaleType="fitXY" />
 
     <Button
