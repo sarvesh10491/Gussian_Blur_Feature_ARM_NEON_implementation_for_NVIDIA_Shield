@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int SELECT_PICTURE = 1;                                            //Flag to enable gallery image chooser activity
     int lang;                                                                               //Id for spinner dropdown values
     float a0f, a1f, a2f,a3f, s0f, s1f;                                                      //a0f, a1f, a2f, a3f defining blurring sections
-                                                                                            //s0f Sigma Far, s1f Sigma Near
+    //s0f Sigma Far, s1f Sigma Near
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ivBlurImage.setImageBitmap(imagemap);
                 Log.d(null,"Bitmap  imagemap values"+imagemap.getHeight());
                 bmp=imagemap.copy(Bitmap.Config.ARGB_8888,true);
-                }
+            }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Image was not found", Toast.LENGTH_SHORT).show();
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+//    public native String stringFromJNI();
 
     @Override
     public void onClick(View view) {
@@ -298,18 +298,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 Toast.makeText(getApplicationContext(), "Blurring started!!", Toast.LENGTH_SHORT).show();
-                long StartTime = System.nanoTime();                                        //To initiate the calculation time for blurring
+                double StartTime = System.nanoTime();                                        //To initiate the calculation time for blurring
                 lang = LanguageSpinner.getSelectedItemPosition();
                 if (lang==0) {                                                              //Running code for first element of language selection spinner i.e. Java
                     Log.d(null,"Running Java");
                     Log.d(null,"Bitmap bmp values"+bmp.getHeight());
                     Bitmap outbmp = GaussianBlur.tiltBlur_java(bmp, s0f, s1f, (int) (a0f * bmp.getHeight()), (int) (a1f * bmp.getHeight()), (int) (a2f * bmp.getHeight()), (int) (a3f * bmp.getHeight()));
                     ivBlurImage.setImageBitmap(outbmp);
-                    long EndTime = System.nanoTime();
-                    long output = (EndTime - StartTime)/(long)1000000000;                 //Calculate total execution time in seconds
+                    double EndTime = System.nanoTime();
+                    double output = (EndTime - StartTime)/(double)1000000000;                 //Calculate total execution time in seconds
                     Toast.makeText(getApplicationContext(), "Blurring complete in "+  output+" seconds", Toast.LENGTH_LONG).show();
 
                 }
+                else if(lang==1){
+                    //Running code for first element of language selection spinner i.e. C++
+                    Log.d(null,"Running C++");
+                    Log.d(null,"Bitmap bmp values"+bmp.getHeight());
+                    Bitmap outbmp = GaussianBlur.tiltBlur_cpp(bmp, s0f, s1f, (int) (a0f * bmp.getHeight()), (int) (a1f * bmp.getHeight()), (int) (a2f * bmp.getHeight()), (int) (a3f * bmp.getHeight()));
+                    ivBlurImage.setImageBitmap(outbmp);
+                    double EndTime = System.nanoTime();
+                    double output = (EndTime - StartTime)/(double)1000000000;                 //Calculate total execution time in seconds
+                    Toast.makeText(getApplicationContext(), "Blurring complete in "+  output+" seconds", Toast.LENGTH_LONG).show();
+
+
+                }
+
+
                 //To enbale blur and reset button on UI after completion of blurring of an image
                 blurButton.setEnabled(true);
                 resetButton.setEnabled(true);
