@@ -2,6 +2,7 @@ package com.example.achal.tilt_shift_blur;
 
 import android.graphics.Bitmap;                                                                                          // Importing libraries
 import android.util.Log;
+import android.widget.Toast;
 
 public class GaussianBlur {
 
@@ -16,9 +17,26 @@ public class GaussianBlur {
         return gblur;
     }
 
+    public static Bitmap tiltBlur_cpp(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3) {
+        Log.d(null, "Running Java #####");
+        Log.d(null, "Bitmap input values" + input.getHeight());
+        sigma_far = 8 * sigma_far;                                                                                      // Sigma far scaling
+        sigma_near = 8 * sigma_near;                                                                                    // sigma near scaling
+        Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);              // creating image bitmap
+        int pixelArrayDimension = (input.getHeight()) * (input.getWidth());                                             // pixel array dimension
+        int[] pixels = new int[pixelArrayDimension];
+        input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
+
+        tiltshiftcppnative(pixels,pixels,input.getWidth(),input.getHeight(),sigma_far,sigma_near,a0,a1,a2,a3);
+        outBmp.setPixels(pixels,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
+        return outBmp;
+    }
+
     public static Bitmap tiltBlur_java(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3) {
         Log.d(null, "Running Java #####");
         Log.d(null, "Bitmap input values" + input.getHeight());
+        Log.d(null,"a0 "+a0+" a1 "+a1+" a2 "+a2+" a3 "+a3+" ");
+        System.out.println("a0 "+a0+" a1 "+a1+" a2 "+a2+" a3 "+a3+" ");
         sigma_far = 8 * sigma_far;                                                                                      // Sigma far scaling
         sigma_near = 8 * sigma_near;                                                                                    // sigma near scaling
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);              // creating image bitmap
@@ -239,4 +257,6 @@ public class GaussianBlur {
         }
         return matrix;
     }
+    public static native int tiltshiftcppnative(int[] inputPixels, int[] outputPixels, int width, int height, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3);
 }
+
