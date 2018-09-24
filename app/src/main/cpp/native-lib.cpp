@@ -2,23 +2,12 @@
 #include <string>
 #include <cmath>
 #include <android/log.h>
-
-//#include "tiltshiftBlur_lib.h"
-#include "tiltshiftBlur_lib.cpp"
+#include <arm_neon.h>
+#include "tiltshiftBlur_lib.h"
+#include "tiltshiftBlur_neon_lib.h"
+//#include "tiltshiftBlur_lib.cpp"
 
 using namespace std;
-
-//extern "C"
-//JNIEXPORT jstring
-//
-//JNICALL
-//Java_com_example_achal_tilt_1shift_1blur_MainActivity_stringFromJNI(
-//        JNIEnv *env,
-//        jobject /* this */) {
-//    std::string hello = "Hello from C++";
-//    return env->NewStringUTF(hello.c_str());
-//}
-
 
 
 extern "C"
@@ -40,8 +29,8 @@ Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftcppnative(JNIEnv 
     __android_log_print(ANDROID_LOG_ERROR, "width :", "%d", width);
     int temp1 = 2*kernelRadFar+1;
     int temp2 = 2*kernelRadNear+1;
-    double kernelMatNear[temp2];
-    double kernelMatFar[temp1];
+    float kernelMatNear[temp2];
+    float kernelMatFar[temp1];
     cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env, instance,kernelRadFar, sigma_far,kernelMatFar );                                                           // Gaussian Vector far
     cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env, instance,kernelRadNear, sigma_near,kernelMatNear);                                                        // Gaussian Vector near
 
@@ -71,14 +60,14 @@ Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftcppnative(JNIEnv 
     }
 
     for(int i=a0;i<(int)a1;i++){                                                                                    // Computing of first transform from a0th row to a1th row of the image bitmap
-        double newsigmaFar=sigma_far*(a1-i)/a1a0;                                                                   // Computing new sigma value based on the current row of the pixel
+        float newsigmaFar=sigma_far*(a1-i)/a1a0;                                                                   // Computing new sigma value based on the current row of the pixel
         if(newsigmaFar<0.6){
 
             newsigmaFar=0.6;
         }
 
         int newGaussVectSize=(int) ceil((2 * sigma_far));
-        double newGaussVect[2*newGaussVectSize+1];
+        float newGaussVect[2*newGaussVectSize+1];
         // New radius based on the updated sigma value
         cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env,instance,newGaussVectSize, (float) newsigmaFar,newGaussVect);                                           // New gaussian vector using new radius and sigma value
 
@@ -90,12 +79,12 @@ Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftcppnative(JNIEnv 
     }
 //
     for(int i=a2;i<a3;i++){                                                                                         // Computing of first transform from a2th row to a3th row of the image bitmap
-        double newsigmaNear=sigma_near*(i-a2)/a2a3;                                                                 // Computing new sigma value based on the current row of the pixel
+        float newsigmaNear=sigma_near*(i-a2)/a2a3;                                                                 // Computing new sigma value based on the current row of the pixel
         if(newsigmaNear<0.6){
             newsigmaNear=0.6;
         }
         int newGaussVectSize=(int) ceil((2 * sigma_near));                                                     // New radius based on the updated sigma value
-        double newGaussVect[2*newGaussVectSize+1];
+        float newGaussVect[2*newGaussVectSize+1];
         cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env,instance,newGaussVectSize, (float) newsigmaNear,newGaussVect);                                          // New gaussian vector using new radius and sigma value
         int newRadius=newGaussVectSize;
         for(int j = newRadius; j < width-newRadius; j++){
@@ -124,12 +113,12 @@ Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftcppnative(JNIEnv 
 //
 //
     for(int i=a0;i<a1;i++){                                                                                             // Computing of Second transform from a0th row to a1th row of the image bitmap
-        double newsigmaFar=sigma_far*(a1-i)/a1a0;                                                                   // Computing new sigma value based on the current row pf the pixel
+        float newsigmaFar=sigma_far*(a1-i)/a1a0;                                                                   // Computing new sigma value based on the current row pf the pixel
         if(newsigmaFar<0.6){
             newsigmaFar=0.6;
         }
         int newGaussVectSize=(int) ceil((2 * sigma_far));                                                      // New radius based on the updated sigma value
-        double newGaussVect[2*newGaussVectSize+1];
+        float newGaussVect[2*newGaussVectSize+1];
         cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env,instance,newGaussVectSize, (float) newsigmaFar,newGaussVect);                                           // New gaussian vector using new radius and sigma value
         int newRadius=newGaussVectSize;
         for(int j=0;j<width;j++){
@@ -139,12 +128,12 @@ Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftcppnative(JNIEnv 
     }
 //
     for(int i=a2;i<a3;i++){                                                                                         // Computing of Second transform from a2th row to a3th of the image bitmap
-        double newsigmaNear=sigma_near*(i-a2)/a2a3;                                                                 // Computing new sigma value based on the current row pf the pixel
+        float newsigmaNear=sigma_near*(i-a2)/a2a3;                                                                 // Computing new sigma value based on the current row pf the pixel
         if(newsigmaNear<0.6){
             newsigmaNear=0.6;
         }
         int newGaussVectSize=(int) ceil((2 * sigma_near));                                                     // New radius based on the updated sigma value
-        double newGaussVect[2*newGaussVectSize+1];
+        float newGaussVect[2*newGaussVectSize+1];
         cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env,instance,newGaussVectSize, (float) newsigmaNear,newGaussVect);                                          // New gaussian vector using new radius and sigma value
         int newRadius=newGaussVectSize;
         for(int j=0;j<width;j++){
@@ -176,5 +165,39 @@ Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftcppnative(JNIEnv 
     env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
     env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
     return 0;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftneonnative(JNIEnv *env, jobject instance,
+                                                                         jintArray inputPixels_,
+                                                                         jintArray outputPixels_,
+                                                                         jint width, jint height,
+                                                                         jfloat sigma_far,
+                                                                         jfloat sigma_near, jint a0,
+                                                                         jint a1, jint a2,
+                                                                         jint a3){
+
+    jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
+    jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
+
+    int kernelRadFar = (int) ceil((2 * sigma_far));                                                            // Gaussian vector radius for far pixels
+    int kernelRadNear = (int) ceil(2 * sigma_near);                                                            // Gaussian vector radius for near pixels
+    __android_log_print(ANDROID_LOG_ERROR, "height :", "%d", height);
+    __android_log_print(ANDROID_LOG_ERROR, "width :", "%d", width);
+    int temp1 = 2*kernelRadFar+1;
+    int temp2 = 2*kernelRadNear+1;
+    float *kernelMatNear=(float*)calloc (temp1,sizeof(float));
+    float *kernelMatFar=(float*)calloc (temp1,sizeof(float));
+
+    cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env, instance,kernelRadFar, sigma_far,kernelMatFar );                                                           // Gaussian Vector far
+    cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env, instance,kernelRadNear, sigma_near,kernelMatNear);
+
+
+    env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
+    env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
+    return 0;
+
+
 }
 

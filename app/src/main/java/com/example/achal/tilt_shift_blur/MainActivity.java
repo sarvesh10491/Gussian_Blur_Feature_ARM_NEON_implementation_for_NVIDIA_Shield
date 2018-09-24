@@ -322,6 +322,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                 }
+                else if(lang==2){
+                    //Running code for first element of language selection spinner i.e. C++
+                    Log.d(null,"Running Neon Intinsic");
+                    Log.d(null,"Bitmap bmp values"+bmp.getHeight());
+                    Bitmap outbmp = GaussianBlur.tiltshift_neon_intrinsic(bmp, s0f, s1f, (int) (a0f * bmp.getHeight()), (int) (a1f * bmp.getHeight()), (int) (a2f * bmp.getHeight()), (int) (a3f * bmp.getHeight()));
+                    ivBlurImage.setImageBitmap(outbmp);
+                    double EndTime = System.nanoTime();
+                    double output = (EndTime - StartTime)/(double)1000000000;                 //Calculate total execution time in seconds
+                    Toast.makeText(getApplicationContext(), "Blurring complete in "+  output+" seconds", Toast.LENGTH_LONG).show();
+
+
+                }
 
 
                 //To enbale blur and reset button on UI after completion of blurring of an image
