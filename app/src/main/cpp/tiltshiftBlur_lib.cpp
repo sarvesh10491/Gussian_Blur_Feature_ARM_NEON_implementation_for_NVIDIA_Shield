@@ -14,7 +14,7 @@ namespace cppLib {
     Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_colorGaussBlur(jint pixel, jfloat gauss,
                                                                          jint mul) {                                                 // Method to calculate transform of each color of an individual pixel
         int G = (pixel >> (mul * 8)) & 0xff;
-        double ret = (G * gauss);
+        float ret = (G * gauss);
         return ret;
     }
 

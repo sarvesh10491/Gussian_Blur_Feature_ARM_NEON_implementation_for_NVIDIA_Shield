@@ -185,14 +185,26 @@ Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_tiltshiftneonnative(JNIEnv
     int kernelRadNear = (int) ceil(2 * sigma_near);                                                            // Gaussian vector radius for near pixels
     __android_log_print(ANDROID_LOG_ERROR, "height :", "%d", height);
     __android_log_print(ANDROID_LOG_ERROR, "width :", "%d", width);
-    int temp1 = 2*kernelRadFar+1;
-    int temp2 = 2*kernelRadNear+1;
-    float *kernelMatNear=(float*)calloc (temp1,sizeof(float));
+    int temp1 = (2*kernelRadFar+1)+(4-(kernelRadFar%4));
+    int temp2 = (2*kernelRadNear+1)+(4-(kernelRadNear%4));
+    float *kernelMatNear=(float*)calloc (temp2,sizeof(float));
     float *kernelMatFar=(float*)calloc (temp1,sizeof(float));
 
     cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env, instance,kernelRadFar, sigma_far,kernelMatFar );                                                           // Gaussian Vector far
     cppLib::Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_kernelMatrix(env, instance,kernelRadNear, sigma_near,kernelMatNear);
 
+    for(int i=0;i<a0;i++){                                                                                          // Computing of first transform from 0th row to a0th row of a pixels
+        for(int j = 0; j < width; j++){
+            pixels[i * width + j] = Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(pixels,kernelMatFar,i,j,width,kernelRadFar);                       // Method call to calculate first transform for each pixel
+        }
+    }
+
+    for(int i=0;i<a0;i++) {                                                                                    // Method call to calculate Second transform for each pixel from row a3 to height
+        for (int j = 0; j < width ; j++) {
+            pixels[i * width + j] = Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(pixels,kernelMatNear,i,j,width,height,kernelRadNear);                    //Method call to calculate first transform for each pixel
+
+        }
+    }
 
     env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
     env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
