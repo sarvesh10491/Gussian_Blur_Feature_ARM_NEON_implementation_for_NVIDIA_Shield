@@ -7,8 +7,8 @@
 #include <malloc.h>
 #include "tiltshiftBlur_neon_lib.h"
 
-#pragma GCC push_options
-#pragma GCC target ("+nothing+simd")
+//#pragma GCC push_options
+//#pragma GCC target ("+nothing+simd")
 
 //jfloat Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_colorGaussBlur(jint pixel, jfloat gauss,
 //                                                                            jint mul) {                                                 // Method to calculate transform of each color of an individual pixel
@@ -29,6 +29,12 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
                                                                           jint width,
                                                                           jint radius){
 
+    int temp1 = (2*radius+1)+(4-(radius%4));
+    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel!!!!!:", "%d", radius);
+    for(int x = 0; x < temp1; x++){
+        __android_log_print(ANDROID_LOG_ERROR," ", "%d     %lf",x, kernelMat[x]);
+    }
+
     jfloat R = 0.0, G = 0.0, B = 0.0, A = 0.0;
 
     float32x4_t a_Vec = vdupq_n_f32(0);
@@ -36,8 +42,8 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
     float32x4_t g_Vec = vdupq_n_f32(0);
     float32x4_t b_Vec = vdupq_n_f32(0);
 
-    if (j >= radius && j < width -
-                           radius) {
+//    if (j >= radius && j < width -
+//                           radius) {
         for (int g_index = -radius; g_index <= radius; g_index = g_index + 4) {
             uint32x4_t aVec = vdupq_n_u8(0);
             uint32x4_t rVec = vdupq_n_u8(0);
@@ -82,7 +88,7 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
         for(int i=0; i<4;i++){
             B += tempArray[i];
         }
-    }
+//    }
 
     return ((jint) A & 0xff) << 24 | ((jint) R & 0xff) << 16 | ((jint) G & 0xff) << 8 |
            ((jint) B & 0xff);
@@ -95,6 +101,13 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
                                                                            jint width,
                                                                            jint height,
                                                                            jint radius) {             // Method to calculate Second (column wise transform) of bitmap image with gaussian vector
+
+    int temp1 = (2*radius+1)+(4-(radius%4));
+    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel 2nd trans!!!!!:", "%d", radius);
+    for(int x = 0; x < temp1; x++){
+        __android_log_print(ANDROID_LOG_ERROR," ", "%lf", kernelMat[x]);
+    }
+
     float32_t R = 0.0, G = 0.0, B = 0.0, A = 0.0;
 
     float32x4_t a_Vec = vdupq_n_f32(0);
@@ -102,8 +115,8 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
     float32x4_t g_Vec = vdupq_n_f32(0);
     float32x4_t b_Vec = vdupq_n_f32(0);
 
-    if (i >= radius && i < height -
-                           radius) {                                                                        // Loop to calculate row transform for the each pixel on the first index [r,(width - r))
+//    if (i >= radius && i < height -
+//                           radius) {                                                                        // Loop to calculate row transform for the each pixel on the first index [r,(width - r))
         for (int g_index = -radius; g_index <= radius; g_index = g_index+4) {
 
             uint32x4_t aVec = vdupq_n_u8(0);
@@ -152,7 +165,7 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
 //        B = (float32_t) __builtin_neon_vaddvq_f32((int8x16_t)b_Vec);
 
 
-    }
+//    }
 
     return ((jint) A & 0xff) << 24 | ((jint) R & 0xff) << 16 | ((jint) G & 0xff) << 8 |
            ((jint) B & 0xff);

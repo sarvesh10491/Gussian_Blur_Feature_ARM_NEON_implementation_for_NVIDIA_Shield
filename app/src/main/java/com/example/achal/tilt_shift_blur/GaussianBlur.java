@@ -18,7 +18,7 @@ public class GaussianBlur {
     }
 
     public static Bitmap tiltBlur_cpp(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3) {
-        Log.d(null, "Running Java #####");
+        Log.d(null, "Running C++ #####");
         Log.d(null, "Bitmap input values" + input.getHeight());
         sigma_far = 7 * sigma_far;                                                                                      // Sigma far scaling
         sigma_near = 7 * sigma_near;                                                                                     // sigma near scaling
@@ -33,12 +33,14 @@ public class GaussianBlur {
     }
 
     public static Bitmap tiltshift_neon_intrinsic(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3){
+        sigma_far = 7 * sigma_far;                                                                                      // Sigma far scaling
+        sigma_near = 7 * sigma_near;
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
         int[] pixels = new int[input.getHeight()*input.getWidth()];
         int[] pixelsOut = new int[input.getHeight()*input.getWidth()];
         input.getPixels(pixels,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
 
-        tiltshiftneonnative(pixels,pixelsOut,input.getWidth(),input.getHeight(),sigma_far,sigma_near,a0,a1,a2,a3);
+        tiltshiftneonnative(pixels,pixels,input.getWidth(),input.getHeight(),sigma_far,sigma_near,a0,a1,a2,a3);
 
         outBmp.setPixels(pixelsOut,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
         return outBmp;
