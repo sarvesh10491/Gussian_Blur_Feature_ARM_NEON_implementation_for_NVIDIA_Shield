@@ -188,10 +188,10 @@
     int kernelRadNear = (int) ceil(2 * sigma_near);                                                            // Gaussian vector radius for near pixels
     __android_log_print(ANDROID_LOG_ERROR, "neon height :", "%d", height);
     __android_log_print(ANDROID_LOG_ERROR, "neon width :", "%d", width);
-    __android_log_print(ANDROID_LOG_ERROR, "sigma_far :", "%d", sigma_far);
+    __android_log_print(ANDROID_LOG_ERROR, "sigma_far :", "%f", sigma_far);
     __android_log_print(ANDROID_LOG_ERROR, "kernelRadFar :", "%d", kernelRadFar);
-    int temp1 = (2*kernelRadFar+1)+(4-(kernelRadFar%4));
-    int temp2 = (2*kernelRadNear+1)+(4-(kernelRadNear%4));
+    int temp1 = (2*kernelRadFar+1)+(4-((2*kernelRadFar+1)%4));
+    int temp2 = (2*kernelRadNear+1)+(4-((2*kernelRadNear+1)%4));
     float *kernelMatNear=(float*)calloc (temp2,sizeof(float));
     float *kernelMatFar=(float*)calloc (temp1,sizeof(float));
 
@@ -205,7 +205,7 @@
     __android_log_print(ANDROID_LOG_ERROR, "Pixel before:", "%d", pixels[0]);
         for(int i=0;i<1;i++){
         for(int j = 0; j < 1; j++){
-            pixels[i * width + j] = Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(pixels,kernelMatFar,i,j,width,kernelRadFar);                       // Method call to calculate first transform for each pixel
+            outputPixels[i * width + j] = Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(pixels,kernelMatFar,i,j,width,kernelRadFar);                       // Method call to calculate first transform for each pixel
         }
     }
 
@@ -213,7 +213,7 @@
 
     for(int i=0;i<1;i++) {                                                                                    // Method call to calculate Second transform for each pixel from row a3 to height
         for (int j = 0; j < 1 ; j++) {
-            pixels[i * width + j] = Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(pixels,kernelMatNear,i,j,width,height,kernelRadNear);                    //Method call to calculate first transform for each pixel
+            outputPixels[i * width + j] = Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(pixels,kernelMatNear,i,j,width,height,kernelRadNear);                    //Method call to calculate first transform for each pixel
 
         }
     }

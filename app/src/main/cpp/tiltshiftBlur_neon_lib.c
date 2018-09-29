@@ -4,7 +4,7 @@
 #include <jni.h>
 #include <android/log.h>
 #include <arm_neon.h>
-#include <malloc.h>
+#include <stdio.h>
 #include "tiltshiftBlur_neon_lib.h"
 
 //#pragma GCC push_options
@@ -23,16 +23,48 @@
 //    return __builtin_aarch64_reduc_plus_scal_v4sf (__a);
 //}
 
+void print_float32 (float32x4_t data, char* name) {
+    int i;
+    static float32_t p[4];
+
+    vst1q_f32 (p, data);
+
+    printf ("%s = ", name);
+    __android_log_print(ANDROID_LOG_ERROR, "in print!!", "%s",name);
+    for (i = 0; i < 4; i++) {
+        __android_log_print(ANDROID_LOG_ERROR, "", "%f ",p[i]);
+//        printf ("%f ", p[i]);
+    }
+    printf ("\n");
+}
+
+
+void print_uint32 (uint32x4_t data, char* name) {
+    int i;
+    static uint32_t p[4];
+
+    vst1q_u32 (p, data);
+
+    printf ("%s = ", name);
+    __android_log_print(ANDROID_LOG_ERROR, "in print!!", "%s",name);
+    for (i = 0; i < 4; i++) {
+        __android_log_print(ANDROID_LOG_ERROR, "", "%d ",p[i]);
+//        printf ("%f ", p[i]);
+    }
+    printf ("\n");
+}
+
 jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(jint *pixels,
                                                                           jfloat *kernelMat,
                                                                           jint i, jint j,
                                                                           jint width,
                                                                           jint radius){
 
-    int temp1 = (2*radius+1)+(4-(radius%4));
-    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel!!!!!:", "%d", radius);
-    for(int x = 0; x < temp1; x++){
-        __android_log_print(ANDROID_LOG_ERROR," ", "%d     %lf",x, kernelMat[x]);
+//    int temp1 = (2*radius+1)+(4-((2*radius+1)%4));
+//
+    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel!!!!!:", "%d",radius);
+    for (int g_index = -radius; g_index <= radius; g_index++){
+        __android_log_print(ANDROID_LOG_ERROR," ", "%d ", pixels[i * width + j + g_index]);
     }
 
     jfloat R = 0.0, G = 0.0, B = 0.0, A = 0.0;
@@ -52,7 +84,12 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
 
             float32x4_t matVec = vld1q_f32(kernelMat);
 
+
+            //Checkpoint 1
+
             uint32x4_t pixelVec = vld1q_u32(&pixels[i * width + j + g_index]);
+
+            print_uint32(pixelVec,"pixelVec");
 
             aVec = (pixelVec >> (3 * 8)) & 0xff;
             rVec = (pixelVec >> (2 * 8)) & 0xff;
@@ -73,20 +110,20 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
 //        B = vaddvq_f32(b_Vec);
         float tempArray[4];
         vst1q_f32(tempArray,a_Vec);
-        for(int i=0; i<4;i++){
-            A += tempArray[i];
+        for(int x=0; x<4;x++){
+            A += tempArray[x];
         }
         vst1q_f32(tempArray,r_Vec);
-        for(int i=0; i<4;i++){
-            R += tempArray[i];
+        for(int x=0; x<4;x++){
+            R += tempArray[x];
         }
         vst1q_f32(tempArray,g_Vec);
-        for(int i=0; i<4;i++){
-            G += tempArray[i];
+        for(int x=0; x<4;x++){
+            G += tempArray[x];
         }
         vst1q_f32(tempArray,b_Vec);
-        for(int i=0; i<4;i++){
-            B += tempArray[i];
+        for(int x=0; x<4;x++){
+            B += tempArray[x];
         }
 //    }
 
@@ -144,20 +181,20 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
 
         float tempArray[4];
         vst1q_f32(tempArray,a_Vec);
-        for(int i=0; i<4;i++){
-            A += tempArray[i];
+        for(int x=0; x<4;x++){
+            A += tempArray[x];
         }
         vst1q_f32(tempArray,r_Vec);
-        for(int i=0; i<4;i++){
-            R += tempArray[i];
+        for(int x=0; x<4;x++){
+            R += tempArray[x];
         }
         vst1q_f32(tempArray,g_Vec);
-        for(int i=0; i<4;i++){
-             G += tempArray[i];
+        for(int x=0; x<4;x++){
+            G += tempArray[x];
         }
         vst1q_f32(tempArray,b_Vec);
-        for(int i=0; i<4;i++){
-            B += tempArray[i];
+        for(int x=0; x<4;x++){
+            B += tempArray[x];
         }
 //        A = (float32_t) __builtin_neon_vaddvq_f32((int8x16_t)a_Vec);
 //        R = (float32_t) __builtin_neon_vaddvq_f32((int8x16_t)r_Vec);
