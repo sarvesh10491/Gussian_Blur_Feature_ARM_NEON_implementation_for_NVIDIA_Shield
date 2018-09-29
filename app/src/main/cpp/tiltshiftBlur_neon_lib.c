@@ -54,6 +54,8 @@ void print_uint32 (uint32x4_t data, char* name) {
     printf ("\n");
 }
 
+
+
 jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(jint *pixels,
                                                                           jfloat *kernelMat,
                                                                           jint i, jint j,
@@ -61,12 +63,15 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
                                                                           jint radius){
 
 //    int temp1 = (2*radius+1)+(4-((2*radius+1)%4));
-//
-    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel!!!!!:", "%d",radius);
-    for (int g_index = -radius; g_index <= radius; g_index++){
-        __android_log_print(ANDROID_LOG_ERROR," ", "%d ", pixels[i * width + j + g_index]);
-    }
-
+////
+//    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel!!!!!:", " %d ",j);
+//    for (int g_index = -radius; g_index <= radius; g_index++){
+//        __android_log_print(ANDROID_LOG_ERROR," ", "%d ", pixels[i * width + j + g_index]);
+//    }
+//    __android_log_print(ANDROID_LOG_ERROR, "ARGB check!!!!!:", " %d ",radius);
+//    for (int g_index = 0; g_index <= 3; g_index++){
+//        __android_log_print(ANDROID_LOG_ERROR," ", "%d ", ((pixels[i * width + j]  & 0xff) >> g_index*8));
+//    }
     jfloat R = 0.0, G = 0.0, B = 0.0, A = 0.0;
 
     float32x4_t a_Vec = vdupq_n_f32(0);
@@ -74,8 +79,10 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
     float32x4_t g_Vec = vdupq_n_f32(0);
     float32x4_t b_Vec = vdupq_n_f32(0);
 
-//    if (j >= radius && j < width -
-//                           radius) {
+
+
+    if (j >= radius && j < width -
+                           radius) {
         for (int g_index = -radius; g_index <= radius; g_index = g_index + 4) {
             uint32x4_t aVec = vdupq_n_u8(0);
             uint32x4_t rVec = vdupq_n_u8(0);
@@ -84,23 +91,26 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
 
             float32x4_t matVec = vld1q_f32(kernelMat);
 
-
             //Checkpoint 1
 
-            uint32x4_t pixelVec = vld1q_u32(&pixels[i * width + j + g_index]);
+            uint32x4_t pixelVec = vld1q_u32(&pixels[i * width + j + g_index]);//
 
-            print_uint32(pixelVec,"pixelVec");
+//            print_uint32(pixelVec,"pixelVec");
 
             aVec = (pixelVec >> (3 * 8)) & 0xff;
             rVec = (pixelVec >> (2 * 8)) & 0xff;
             gVec = (pixelVec >> (1 * 8)) & 0xff;
             bVec = (pixelVec >> (0 * 8)) & 0xff;
-
-            a_Vec = vmlaq_f32(a_Vec,aVec,matVec);
-            r_Vec = vmlaq_f32(r_Vec,rVec,matVec);
-            g_Vec = vmlaq_f32(g_Vec,gVec,matVec);
-            b_Vec = vmlaq_f32(b_Vec,bVec,matVec);
-
+//            print_uint32(rVec,"rVec");
+            float32x4_t temp_int_Vec = vcvtq_f32_s32 (aVec);
+            a_Vec = vmlaq_f32(a_Vec,temp_int_Vec,matVec);
+            temp_int_Vec = vcvtq_f32_s32 (rVec);
+            r_Vec = vmlaq_f32(r_Vec,temp_int_Vec,matVec);
+            temp_int_Vec = vcvtq_f32_s32 (gVec);
+            g_Vec = vmlaq_f32(g_Vec,temp_int_Vec,matVec);
+            temp_int_Vec = vcvtq_f32_s32 (bVec);
+            b_Vec = vmlaq_f32(b_Vec,temp_int_Vec,matVec);
+//            print_float32(r_Vec,"r_Vec");
             kernelMat = kernelMat + 4;
         }
 
@@ -113,25 +123,30 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
         for(int x=0; x<4;x++){
             A += tempArray[x];
         }
+//        printf("A value is %f\n",A);
+//    __android_log_print(ANDROID_LOG_ERROR, "A value is", "%f",A);
         vst1q_f32(tempArray,r_Vec);
         for(int x=0; x<4;x++){
             R += tempArray[x];
         }
+//    __android_log_print(ANDROID_LOG_ERROR, "R value is", "%f",R);
         vst1q_f32(tempArray,g_Vec);
         for(int x=0; x<4;x++){
             G += tempArray[x];
         }
+//    __android_log_print(ANDROID_LOG_ERROR, "G value is", "%f",G);
         vst1q_f32(tempArray,b_Vec);
         for(int x=0; x<4;x++){
             B += tempArray[x];
         }
-//    }
+//    __android_log_print(ANDROID_LOG_ERROR, "B value is", "%f",B);
+    }
 
     return ((jint) A & 0xff) << 24 | ((jint) R & 0xff) << 16 | ((jint) G & 0xff) << 8 |
            ((jint) B & 0xff);
 }
 
-
+// Changing secong transform
 jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(jint *pixels,
                                                                            jfloat *kernelMat,
                                                                            jint i, jint j,
@@ -139,11 +154,11 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
                                                                            jint height,
                                                                            jint radius) {             // Method to calculate Second (column wise transform) of bitmap image with gaussian vector
 
-    int temp1 = (2*radius+1)+(4-(radius%4));
-    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel 2nd trans!!!!!:", "%d", radius);
-    for(int x = 0; x < temp1; x++){
-        __android_log_print(ANDROID_LOG_ERROR," ", "%lf", kernelMat[x]);
-    }
+    int temp1 = (2*radius+1)+(4-((2*radius+1)%4));
+//    __android_log_print(ANDROID_LOG_ERROR, "Matrix of Neon kernel 2nd trans!!!!!:", "%d", radius);
+//    for(int x = 0; x < temp1; x++){
+//        __android_log_print(ANDROID_LOG_ERROR," ", "%lf", kernelMat[x]);
+//    }
 
     float32_t R = 0.0, G = 0.0, B = 0.0, A = 0.0;
 
@@ -152,8 +167,8 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
     float32x4_t g_Vec = vdupq_n_f32(0);
     float32x4_t b_Vec = vdupq_n_f32(0);
 
-//    if (i >= radius && i < height -
-//                           radius) {                                                                        // Loop to calculate row transform for the each pixel on the first index [r,(width - r))
+    if (i >= radius && i < height -
+                           radius) {                                                                        // Loop to calculate row transform for the each pixel on the first index [r,(width - r))
         for (int g_index = -radius; g_index <= radius; g_index = g_index+4) {
 
             uint32x4_t aVec = vdupq_n_u8(0);
@@ -165,17 +180,32 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
 
             uint32x4_t pixelVec = vld1q_u32(&pixels[j + (i + g_index) * width]);
 
+//            aVec = (pixelVec >> (3 * 8)) & 0xff;
+//            rVec = (pixelVec >> (2 * 8)) & 0xff;
+//            gVec = (pixelVec >> (1 * 8)) & 0xff;
+//            bVec = (pixelVec >> (0 * 8)) & 0xff;
             aVec = (pixelVec >> (3 * 8)) & 0xff;
             rVec = (pixelVec >> (2 * 8)) & 0xff;
             gVec = (pixelVec >> (1 * 8)) & 0xff;
             bVec = (pixelVec >> (0 * 8)) & 0xff;
-
-            a_Vec = vmlaq_f32(a_Vec,aVec,matVec);
-            r_Vec = vmlaq_f32(r_Vec,rVec,matVec);
-            g_Vec = vmlaq_f32(g_Vec,gVec,matVec);
-            b_Vec = vmlaq_f32(b_Vec,bVec,matVec);
-
+//            print_uint32(rVec,"rVec");
+            float32x4_t temp_int_Vec = vcvtq_f32_s32 (aVec);
+            a_Vec = vmlaq_f32(a_Vec,temp_int_Vec,matVec);
+            temp_int_Vec = vcvtq_f32_s32 (rVec);
+            r_Vec = vmlaq_f32(r_Vec,temp_int_Vec,matVec);
+            temp_int_Vec = vcvtq_f32_s32 (gVec);
+            g_Vec = vmlaq_f32(g_Vec,temp_int_Vec,matVec);
+            temp_int_Vec = vcvtq_f32_s32 (bVec);
+            b_Vec = vmlaq_f32(b_Vec,temp_int_Vec,matVec);
+//            print_float32(r_Vec,"r_Vec");
             kernelMat = kernelMat + 4;
+
+//            a_Vec = vmlaq_f32(a_Vec,aVec,matVec);
+//            r_Vec = vmlaq_f32(r_Vec,rVec,matVec);
+//            g_Vec = vmlaq_f32(g_Vec,gVec,matVec);
+//            b_Vec = vmlaq_f32(b_Vec,bVec,matVec);
+//
+//            kernelMat = kernelMat + 4;
 
         }
 
@@ -202,7 +232,7 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(
 //        B = (float32_t) __builtin_neon_vaddvq_f32((int8x16_t)b_Vec);
 
 
-//    }
+    }
 
     return ((jint) A & 0xff) << 24 | ((jint) R & 0xff) << 16 | ((jint) G & 0xff) << 8 |
            ((jint) B & 0xff);

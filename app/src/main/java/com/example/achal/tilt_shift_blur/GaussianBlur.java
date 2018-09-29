@@ -39,10 +39,11 @@ public class GaussianBlur {
         int[] pixels = new int[input.getHeight()*input.getWidth()];
         int[] pixelsOut = new int[input.getHeight()*input.getWidth()];
         input.getPixels(pixels,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
+//        input.getPixels(pixelsOut,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
 
         tiltshiftneonnative(pixels,pixels,input.getWidth(),input.getHeight(),sigma_far,sigma_near,a0,a1,a2,a3);
 
-        outBmp.setPixels(pixelsOut,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
+        outBmp.setPixels(pixels,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
         return outBmp;
     }
 
