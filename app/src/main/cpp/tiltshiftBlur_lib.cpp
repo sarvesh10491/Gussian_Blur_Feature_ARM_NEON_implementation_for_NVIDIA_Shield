@@ -159,7 +159,7 @@ namespace cppLib {
                                                                             jfloat *matrix) {                                                               // Method to calculate entire gaussian vector
 
         int matrixsize = (2 * r + 1);
-        __android_log_print(ANDROID_LOG_ERROR, "matrixsize in kernelmatrix:", "%d", matrixsize);
+//        __android_log_print(ANDROID_LOG_ERROR, "matrixsize in kernelmatrix:", "%d", matrixsize);
 //    double matrix[(2 * r + 1)];                                                                        // Creating gaussian vector of size 2*r+1
         double total = 0, normTotal = 0;
 //    int matrixsize = sizeof (matrix) / sizeof(matrix[0]);

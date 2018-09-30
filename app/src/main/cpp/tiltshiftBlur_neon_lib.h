@@ -14,7 +14,7 @@ jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_firstTransform(j
                                                                                jint width,
                                                                                jint radius);
 
-jint Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(jint *pixels,
+int32x4_t Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_neon_secondTransform(jint *pixels,
                                                                            jfloat *kernelMat,
                                                                            jint i, jint j,
                                                                            jint width,
