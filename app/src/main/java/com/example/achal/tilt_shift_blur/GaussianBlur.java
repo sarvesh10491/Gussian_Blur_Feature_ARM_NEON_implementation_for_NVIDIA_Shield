@@ -20,21 +20,20 @@ public class GaussianBlur {
     public static Bitmap tiltBlur_cpp(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3) {
         Log.d(null, "Running C++ #####");
         Log.d(null, "Bitmap input values" + input.getHeight());
-        sigma_far = 7 * sigma_far;                                                                                      // Sigma far scaling
-        sigma_near = 7 * sigma_near;                                                                                     // sigma near scaling
+        sigma_far = 20 * sigma_far;                                                                                      // Sigma far scaling
+        sigma_near = 20 * sigma_near;                                                                                     // sigma near scaling
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);              // creating image bitmap
         int pixelArrayDimension = (input.getHeight()) * (input.getWidth());                                             // pixel array dimension
         int[] pixels = new int[pixelArrayDimension];
         input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
-
         tiltshiftcppnative(pixels,pixels,input.getWidth(),input.getHeight(),sigma_far,sigma_near,a0,a1,a2,a3);
         outBmp.setPixels(pixels,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
         return outBmp;
     }
 
     public static Bitmap tiltshift_neon_intrinsic(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3){
-        sigma_far = 7 * sigma_far;                                                                                      // Sigma far scaling
-        sigma_near = 7 * sigma_near;
+        sigma_far = 20 * sigma_far;                                                                                      // Sigma far scaling
+        sigma_near = 20 * sigma_near;
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
         int[] pixels = new int[input.getHeight()*input.getWidth()];
         int[] pixelsOut = new int[input.getHeight()*input.getWidth()];
@@ -52,8 +51,8 @@ public class GaussianBlur {
         Log.d(null, "Bitmap input values" + input.getHeight());
         Log.d(null,"a0 "+a0+" a1 "+a1+" a2 "+a2+" a3 "+a3+" ");
         System.out.println("a0 "+a0+" a1 "+a1+" a2 "+a2+" a3 "+a3+" ");
-        sigma_far = 8 * sigma_far;                                                                                      // Sigma far scaling
-        sigma_near = 8 * sigma_near;                                                                                    // sigma near scaling
+        sigma_far = 20 * sigma_far;                                                                                      // Sigma far scaling
+        sigma_near = 20 * sigma_near;                                                                                    // sigma near scaling
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);              // creating image bitmap
         int kernelRadFar = (int) Math.ceil((2 * sigma_far));                                                            // Gaussian vector radius for far pixels
         int kernelRadNear = (int) Math.ceil(2 * sigma_near);                                                            // Gaussian vector radius for near pixels

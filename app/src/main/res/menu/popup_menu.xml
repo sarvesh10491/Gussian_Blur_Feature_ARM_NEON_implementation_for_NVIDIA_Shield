@@ -9,4 +9,7 @@
     <item
         android:id="@+id/three"
         android:title="Use sample image 2"/>
+    <item
+        android:id="@+id/four"
+        android:title="Use sample image 3"/>
 </menu>

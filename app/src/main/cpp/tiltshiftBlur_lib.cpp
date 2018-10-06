@@ -42,7 +42,7 @@ namespace cppLib {
                         0);               //  Color wise transform for blue bits
             }
         } else if (j <
-                   radius) {                                                                                                      // Loop to calculate row transform for the each pixel on the index [0,r)
+                   radius) {                                                                                            // Loop to calculate row transform for the each pixel on the index [0,r)
             for (int g_index = -j, k = 0; g_index <= radius; g_index++, k++) {
                 A += Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_colorGaussBlur(
                         pixels[i * width + k], kernelMat[radius + g_index],
@@ -87,9 +87,6 @@ namespace cppLib {
                                                                                jint height,
                                                                                jint radius) {             // Method to calculate Second (column wise transform) of bitmap image with gaussian vector
         jfloat R = 0.0, G = 0.0, B = 0.0, A = 0.0;
-//    int pixelslength = sizeof (pixels) / sizeof (pixels[0]);
-//    __android_log_print(ANDROID_LOG_ERROR, "pixelslength :", "%d", pixelslength);
-//    jint height = pixelslength / width;
         if (i >= radius && i < height -
                                radius) {                                                                        // Loop to calculate row transform for the each pixel on the first index [r,(width - r))
             for (int g_index = -radius; g_index <= radius; g_index++) {
@@ -159,10 +156,8 @@ namespace cppLib {
                                                                             jfloat *matrix) {                                                               // Method to calculate entire gaussian vector
 
         int matrixsize = (2 * r + 1);
-//        __android_log_print(ANDROID_LOG_ERROR, "matrixsize in kernelmatrix:", "%d", matrixsize);
-//    double matrix[(2 * r + 1)];                                                                        // Creating gaussian vector of size 2*r+1
+                                                                       // Creating gaussian vector of size 2*r+1
         double total = 0, normTotal = 0;
-//    int matrixsize = sizeof (matrix) / sizeof(matrix[0]);
         for (int i = 0; i < matrixsize; i++) {
             matrix[i] = Java_com_example_achal_tilt_1shift_1blur_GaussianBlur_getGaussian(env,
                                                                                           instance,
@@ -174,7 +169,6 @@ namespace cppLib {
             matrix[i] = matrix[i] / total;
             normTotal += matrix[i];
         }
-//    return matrix;
     }
 
 }

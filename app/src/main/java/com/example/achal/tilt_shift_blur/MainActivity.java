@@ -25,7 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
-import java.io.InputStream;                                                                             //                                                                                                                                                                                                      //
+import java.io.IOException;
+import java.io.InputStream;
+//import java.io.File;
+////import java.io.IOException;
+//import java.io.PrintWriter;                                                                                                                                                                                                      //
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static {
         System.loadLibrary("native-lib");
     }
+
 
     static MainActivity mainActivity;
     private Spinner LanguageSpinner;                                                        //For creating dropdown menu
@@ -140,12 +145,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         else if(imgchoice == R.id.two)                                  //To pic sample image 1
                         {
-                            bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.lena, options);
+                            bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.img1, options);
                             ivBlurImage.setImageBitmap(bmp);
                         }
                         else if(imgchoice == R.id.three)                                ////To pic sample image 2
                         {
-                            bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.img1, options);
+                            bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.img2, options);
+                            ivBlurImage.setImageBitmap(bmp);
+                        }
+                        else if(imgchoice == R.id.four)                                ////To pic sample image 2
+                        {
+                            bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.img3, options);
                             ivBlurImage.setImageBitmap(bmp);
                         }
                         return true;
@@ -289,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         blurButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 blurButton.setEnabled(false);                                               //To disable blur during execution of blurring of an image
                 if(ivBlurImage.getDrawable() == null)                                       //Check to see if user has set the image before blurring
                 {
