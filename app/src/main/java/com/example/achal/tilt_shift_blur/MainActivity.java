@@ -27,6 +27,8 @@ import android.widget.Toast;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import static java.lang.Math.sqrt;
 //import java.io.File;
 ////import java.io.IOException;
 //import java.io.PrintWriter;                                                                                                                                                                                                      //
@@ -56,6 +58,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mainActivity = this;
         setupUI();                                                                          // Method to setup UI components
+/* Following code is to run the app for multiple combination of image, platform and mode
+*  Here we are running each app for 100 times and automating the timestamp capture for each run
+* */
+//        double total=0, sqtotal=0, variance=0;
+//        final BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//        Bitmap outbmp;
+//        bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.img3, options);
+//        for(int i=0;i<100;i++){
+//            //Log.d(null,"Run :"+i);
+//            double StartTime = System.nanoTime();
+//            outbmp = GaussianBlur.tiltBlur_java(bmp, 1f, 1f, (int) (0.2f * bmp.getHeight()), (int) (0.4f * bmp.getHeight()), (int) (0.6f * bmp.getHeight()), (int) (0.8f * bmp.getHeight()));
+//            ivBlurImage.setImageBitmap(outbmp);
+//            double EndTime = System.nanoTime();
+//            double output = (EndTime - StartTime)/(double)1000000000;                 //Calculate total execution time in seconds
+//            total += output;
+//            sqtotal += output*output;
+//            //Log.d(null,"Val :"+output);
+//
+//        }
+//        variance = (100 * sqtotal - total * total)/100;
+//        Toast.makeText(getApplicationContext(), "Neon :: Mean : "+  total/100+"|| Var : "+variance+"|| SD : "+sqrt(variance), Toast.LENGTH_LONG).show();
+
     }
 
     @Override
